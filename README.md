@@ -2,9 +2,7 @@ Pruned Landmark Labeling
 ========================
 
 ## Usage
-- 1.调用./src/centrality_cal.py生成指定的order
-- 2.makefile
-- 3.
+
 ### From CUI Interface
     e.g:
     $ python ./src/centrality_cal.py ./maps/demo.txt
