@@ -46,7 +46,7 @@
 #include <fstream>
 #include <utility>
 
-//
+//  
 // NOTE: Currently only unweighted and undirected graphs are supported.
 //
 
@@ -165,15 +165,43 @@ bool PrunedLandmarkLabeling<kNumBitParallelRoots>
   time_indexing_ = -GetCurrentTimeSec();
   std::vector<int> inv(V);  // new label -> old label
   {
+    // for (int v = 0; v < V; ++v) {
+    //   // We add a random value here to diffuse nearby vertices
+    //   deg[v] = std::make_pair(adj[v].size(), v);
+    // }
     // Order
-    std::vector<std::pair<float, int> > deg(V);
-    for (int v = 0; v < V; ++v) {
-      // We add a random value here to diffuse nearby vertices
-      deg[v] = std::make_pair(adj[v].size() + float(rand()) / RAND_MAX, v);
+    std::vector<std::pair<float, int> > deg;
+    std::ifstream inputFile("./src/centrality.txt");
+    if (!inputFile.is_open()) {
+        std::cerr << "Failed to open input file" << std::endl;
+        return 1;
     }
+    float f;
+    int i;
+    while (inputFile >> f >> i) {
+        // std::cout<< f << i <<std::endl;
+        deg.push_back(std::make_pair(f, i));
+    }
+    inputFile.close();
+
+    // std::cout << "before sort:";
+    // for (int i = 0; i < V; ++i) {
+    //   std::cout << deg[i].first << " " << deg[i].second << std::endl;
+    // }
+
     std::sort(deg.rbegin(), deg.rend());
+
+    // std::cout << "after sort:";
+    // for (int i = 0; i < V; ++i) {
+    //   std::cout << deg[i].first << " " << deg[i].second << std::endl;
+    // }
+
     for (int i = 0; i < V; ++i) inv[i] = deg[i].second;
 
+    // std::cout << "inv:";
+    // for (int i = 0; i < V; ++i) {
+    //   std::cout << inv[i] << std::endl;
+    // }
     // Relabel the vertex IDs
     std::vector<int> rank(V);
     for (int i = 0; i < V; ++i) rank[deg[i].second] = i;
@@ -559,6 +587,8 @@ void PrunedLandmarkLabeling<kNumBitParallelRoots>
   s /= num_v_;
   std::cout << "bit-parallel label size: "   << kNumBitParallelRoots << std::endl;
   std::cout << "average normal label size: " << s << std::endl;
+  std::cout << "You can run the following code for querying distance:\n" <<
+  "\"bin/query_distance index_file <<< \"1 4\"\"\n";
 }
 
 #endif  // PRUNED_LANDMARK_LABELING_H_
