@@ -2,6 +2,7 @@ import networkit as nk
 import networkx as nx
 import random 
 import sys
+import os 
 
 def read_graph(map_path):
     import networkx as nx
@@ -57,8 +58,12 @@ def cal_Kadabra_BC(g_nk):
     Kadabra_BC_value = temp.scores()
     return Kadabra_BC_value
 
-def output2file(centrality_value):
-    with open("./src/centrality.txt", 'w') as f:
+def output2file(centrality_value,  map_name, mode):
+    directory = "../centrality/" + map_name
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    file_path = os.path.join(directory, mode+".txt")
+    with open(file_path, 'w') as f:
         for index, item in enumerate(centrality_value):
             f.write(str(item) + " " + str(index) + "\n")
 
@@ -67,14 +72,19 @@ def prompt(map_path):
     print("centrality you choose has been calculated completely,\n"
         + "Use following command line to execuate PLL algorithm:\n"
         + "\"bin/construct_index " + map_path +" index\"")
+# 从路径解析文件名
 map_path = sys.argv[1]
+import os
+map_name = os.path.basename(map_path)
+
+# Read map
 g_nx = read_graph(map_path)
 g_nk = nx2nkit(g_nx)
 user_input = input("This python file will calculate one specific centrality.\n"
                     +"Please Input a number to decide which centrality,"
                     +" there are several option:\n" 
                     +"0——random, 1——degree, 2——BC, 3——RK, 4——GS, 5——Kadabra\n")
-option = int(user_input)
+options = list(map(int, user_input.split()))
 branch = {
     0 : lambda: cal_random(g_nk),
     1 : lambda: cal_degree(g_nk),
@@ -83,8 +93,19 @@ branch = {
     4 : lambda: cal_GS_BC(g_nk),
     5 : lambda: cal_Kadabra_BC(g_nk)
 }
-func = branch.get(option)
-if func:
-    centrality_value = func()
-    output2file(centrality_value)
-    prompt(map_path)
+modes = {
+    0 : "Random",
+    1 : "Degree",
+    2 : "BC",
+    3 : 'RK',
+    4 : 'GS',
+    5 : 'Kadabra'
+}
+# calculate centrality
+for option in options:
+    func = branch.get(option)
+    mode = modes.get(option)
+    if func:
+        centrality_value = func()
+        output2file(centrality_value, map_name, mode)
+        prompt(map_path)

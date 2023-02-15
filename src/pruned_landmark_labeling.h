@@ -74,7 +74,7 @@ class PrunedLandmarkLabeling {
 
   int GetNumVertices() { return num_v_; }
   void Free();
-  void PrintStatistics();
+  int PrintStatistics();
 
   PrunedLandmarkLabeling()
       : num_v_(0), index_(NULL), time_load_(0), time_indexing_(0) {}
@@ -112,7 +112,7 @@ template<int kNumBitParallelRoots>
 bool PrunedLandmarkLabeling<kNumBitParallelRoots>
 ::ConstructIndex(const char *filename) {
   std::ifstream ifs(filename);
-  return ifs && ConstructIndex(ifs);
+  return  ifs && ConstructIndex(ifs) ;
 }
 
 template<int kNumBitParallelRoots>
@@ -122,6 +122,8 @@ bool PrunedLandmarkLabeling<kNumBitParallelRoots>
   for (int v, w; ifs >> v >> w; ) {
     es.push_back(std::make_pair(v, w));
   }
+  
+  
   if (ifs.bad()) return false;
   ConstructIndex(es);
   return true;
@@ -171,7 +173,7 @@ bool PrunedLandmarkLabeling<kNumBitParallelRoots>
     // }
     // Order
     std::vector<std::pair<float, int> > deg;
-    std::ifstream inputFile("./src/centrality.txt");
+    std::ifstream inputFile("centrality.txt");
     if (!inputFile.is_open()) {
         std::cerr << "Failed to open input file" << std::endl;
         return 1;
@@ -556,7 +558,7 @@ bool PrunedLandmarkLabeling<kNumBitParallelRoots>
       ofs.write((const char*)&d, sizeof(d));
     }
   }
-
+  // std::cout<< ofs.good() << std::endl;
   return ofs.good();
 }
 
@@ -573,7 +575,7 @@ void PrunedLandmarkLabeling<kNumBitParallelRoots>
 }
 
 template<int kNumBitParallelRoots>
-void PrunedLandmarkLabeling<kNumBitParallelRoots>
+int PrunedLandmarkLabeling<kNumBitParallelRoots>
 ::PrintStatistics() {
   std::cout << "load time: "     << time_load_     << " seconds" << std::endl;
   std::cout << "indexing time: " << time_indexing_ << " seconds" << std::endl;
@@ -587,8 +589,7 @@ void PrunedLandmarkLabeling<kNumBitParallelRoots>
   s /= num_v_;
   std::cout << "bit-parallel label size: "   << kNumBitParallelRoots << std::endl;
   std::cout << "average normal label size: " << s << std::endl;
-  std::cout << "You can run the following code for querying distance:\n" <<
-  "\"bin/query_distance index_file <<< \"1 4\"\"\n";
+  return num_v_;
 }
 
 #endif  // PRUNED_LANDMARK_LABELING_H_
