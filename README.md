@@ -7,8 +7,8 @@ Pruned Landmark Labeling
     e.g:
     $ cd src
     $ python ./centrality_cal.py ../maps/demo.txt
-    $ g++ srcipt.cpp -o srcipt
-    $ srcipt
+    $ g++ script.cpp -o script
+    $ script
 
 
 ## References

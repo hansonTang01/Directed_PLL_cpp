@@ -33,7 +33,7 @@ int main(){
     std::cout << std::endl << "This C++ file will execute PLL based on one specific order.\n"
               << "Please Input a number or several numbers' combination to decide which centrality,\n"
               << "there are several option:\n"
-              << "0——random, 1——degree, 2——BC, 3——RK, 4——GS, 5——Kadabra, e.g: 1 2 3 a\n"
+              << "0——random, 1——degree, 2——BC, 3——RK, 4——GS, 5——Kadabra, 6-Close e.g: 1 2 3 a\n"
               << "Note: Input -1 or any alphabet to end input" << std::endl;
     while (std::cin >> num && num != -1) {
         nums.push_back(num);
@@ -41,8 +41,9 @@ int main(){
     //输出到文件
     std::streambuf* coutbuf = std::cout.rdbuf();
     std::cout.rdbuf(outfile.rdbuf());
-    PrunedLandmarkLabeling<> pll;
+   
     for (auto n : nums) {
+        PrunedLandmarkLabeling<> pll;
         char* centrality = choose_centrality(n);
         std::cout << map_name << "->" << centrality << std::endl;
         std::ifstream source_file(source_dir + centrality + ".txt");
@@ -53,19 +54,18 @@ int main(){
         dest_file.close();
         pll.ConstructIndex(const_cast<char*>(map_path.c_str()));
         int V = pll.PrintStatistics();
-        std::cout << std::endl;
         std::mt19937_64 rng(std::random_device{}());
         std::uniform_int_distribution<int> dist(0, V-1);
         std::vector<int> rand_nums;
         auto start_time = std::chrono::high_resolution_clock::now();
-        for (int i=0; i< 100; i++){
+        for (int i=0; i< 1000; i++){
             int start = dist(rng);
             int end = dist(rng);
             pll.QueryDistance(dist(rng), dist(rng));
         }
         auto end_time = std::chrono::high_resolution_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-        std::cout << "100 times query time: " << elapsed.count() << " microseconds\n";
+        std::cout << "1000 times query time: " << elapsed.count() << " microseconds\n" << std::endl;
     }
     std::cout.rdbuf(coutbuf);
     outfile.close();
@@ -92,6 +92,9 @@ char* choose_centrality(int n) {
             break; // 添加 break 语句
         case 5:
             std::strcpy(centrality, "Kadabra");
+            break; // 添加 break 语句
+        case 6:
+            std::strcpy(centrality, "Close");
             break; // 添加 break 语句
         default:
             std::strcpy(centrality, "degree");

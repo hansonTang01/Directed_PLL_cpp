@@ -38,8 +38,14 @@ def cal_degree(g_nk):
     degree = temp.scores()
     return degree
 
+def cal_close(g_nk):
+    temp = nk.centrality.Closeness(g_nk, False, nk.centrality.ClosenessVariant.Standard)
+    temp.run()
+    Close_value = temp.scores()
+    return Close_value
+
 def cal_BC(g_nk):
-    temp = nk.centrality.Betweenness(g_nk,normalized=True).run()
+    temp = nk.centrality.Betweenness(g_nk, normalized=True).run()
     BC_value = temp.scores()
     return BC_value
 
@@ -54,7 +60,7 @@ def cal_GS_BC(g_nk):
     return GS_BC_value
 
 def cal_Kadabra_BC(g_nk):
-    temp = nk.centrality.KadabraBetweenness(g_nk, err = 0.01, delta = 0.1).run().scores()
+    temp = nk.centrality.KadabraBetweenness(g_nk, err = 0.01, delta = 0.1).run()
     Kadabra_BC_value = temp.scores()
     return Kadabra_BC_value
 
@@ -69,9 +75,7 @@ def output2file(centrality_value,  map_name, mode):
 
 def prompt(map_path):
     print("**********************************************")
-    print("centrality you choose has been calculated completely,\n"
-        + "Use following command line to execuate PLL algorithm:\n"
-        + "\"bin/construct_index " + map_path +" index\"")
+    print("centrality you choose has been calculated completely,\n")
 # 从路径解析文件名
 map_path = sys.argv[1]
 import os
@@ -83,7 +87,7 @@ g_nk = nx2nkit(g_nx)
 user_input = input("This python file will calculate one specific centrality.\n"
                     +"Please Input a number to decide which centrality,"
                     +" there are several option:\n" 
-                    +"0——random, 1——degree, 2——BC, 3——RK, 4——GS, 5——Kadabra\n")
+                    +"0——random, 1——degree, 2——BC, 3——RK, 4——GS, 5——Kadabra, 6-Close\n")
 options = list(map(int, user_input.split()))
 branch = {
     0 : lambda: cal_random(g_nk),
@@ -91,7 +95,8 @@ branch = {
     2 : lambda: cal_BC(g_nk),
     3 : lambda: cal_RK_BC(g_nk),
     4 : lambda: cal_GS_BC(g_nk),
-    5 : lambda: cal_Kadabra_BC(g_nk)
+    5 : lambda: cal_Kadabra_BC(g_nk),
+    6 : lambda: cal_close(g_nk)
 }
 modes = {
     0 : "Random",
@@ -99,7 +104,8 @@ modes = {
     2 : "BC",
     3 : 'RK',
     4 : 'GS',
-    5 : 'Kadabra'
+    5 : 'Kadabra',
+    6 : 'Close'
 }
 # calculate centrality
 for option in options:
