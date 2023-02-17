@@ -3,6 +3,7 @@ import networkx as nx
 import random 
 import sys
 import os 
+import time
 
 def read_graph(map_path):
     import networkx as nx
@@ -38,12 +39,6 @@ def cal_degree(g_nk):
     degree = temp.scores()
     return degree
 
-def cal_close(g_nk):
-    temp = nk.centrality.Closeness(g_nk, False, nk.centrality.ClosenessVariant.Standard)
-    temp.run()
-    Close_value = temp.scores()
-    return Close_value
-
 def cal_BC(g_nk):
     temp = nk.centrality.Betweenness(g_nk, normalized=True).run()
     BC_value = temp.scores()
@@ -64,6 +59,12 @@ def cal_Kadabra_BC(g_nk):
     Kadabra_BC_value = temp.scores()
     return Kadabra_BC_value
 
+def cal_close(g_nk):
+    temp = nk.centrality.Closeness(g_nk, False, nk.centrality.ClosenessVariant.Standard)
+    temp.run()
+    Close_value = temp.scores()
+    return Close_value
+
 def output2file(centrality_value,  map_name, mode):
     directory = "../centrality/" + map_name
     if not os.path.exists(directory):
@@ -73,7 +74,7 @@ def output2file(centrality_value,  map_name, mode):
         for index, item in enumerate(centrality_value):
             f.write(str(item) + " " + str(index) + "\n")
 
-def prompt(map_path):
+def prompt():
     print("**********************************************")
     print("centrality you choose has been calculated completely,\n")
 # 从路径解析文件名
@@ -107,11 +108,18 @@ modes = {
     5 : 'Kadabra',
     6 : 'Close'
 }
-# calculate centrality
-for option in options:
-    func = branch.get(option)
-    mode = modes.get(option)
-    if func:
-        centrality_value = func()
-        output2file(centrality_value, map_name, mode)
-        prompt(map_path)
+with open(map_name + "_centrality_cal_time", "w") as f:
+    sys.stdout = f
+
+    # calculate centrality
+    for option in options:
+        func = branch.get(option)
+        mode = modes.get(option)
+        if func:
+            start = time.perf_counter()
+            centrality_value = func()
+            end = time.perf_counter()
+            print(f"time cost of calculate {mode}: {end-start:.4f}")
+            output2file(centrality_value, map_name, mode)
+            prompt()
+    sys.stdout = sys.__stdout__
