@@ -19,7 +19,7 @@ int main(){
     std::getline(std::cin, map_name);
     std::cout << "The map name you entered: " << map_name << std::endl;
 
-    std::ofstream outfile(map_name + "_output.txt");
+    std::ofstream outfile(map_name + "_output.txt", std::ofstream::app);
     if (!outfile.is_open()) {
         std::cerr << "Failed to open output file." << std::endl;
         return 1;

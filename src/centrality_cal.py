@@ -108,7 +108,7 @@ modes = {
     5 : 'Kadabra',
     6 : 'Close'
 }
-with open(map_name + "_centrality_cal_time", "w") as f:
+with open(map_name + "_centrality_cal_time", "a") as f:
     sys.stdout = f
 
     # calculate centrality
