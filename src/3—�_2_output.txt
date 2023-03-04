@@ -1,0 +1,5 @@
+3â€”â_2->Degree
+load time: 0 seconds
+indexing time: 0 seconds
+bit-parallel label size: 50
+average normal label size: -nan
