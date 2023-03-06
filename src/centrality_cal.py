@@ -36,42 +36,50 @@ def cal_random(g_nk):
 
 def cal_degree(g_nk):
     temp = nk.centrality.DegreeCentrality(g_nk).run()
-    degree = temp.ranking()
-    return degree
+    degree_value = temp.scores()
+    degree_ranking = temp.ranking()
+    return degree_value, degree_ranking
 
 def cal_BC(g_nk):
     temp = nk.centrality.Betweenness(g_nk, normalized=True).run()
-    BC_value = temp.ranking()
-    return BC_value
+    BC_value = temp.scores()
+    BC_ranking = temp.ranking()
+    return BC_value, BC_ranking
 
 def cal_RK_BC(g_nk):
     temp = nk.centrality.ApproxBetweenness(g_nk, epsilon=0.01,  delta=0.1).run()
-    RK_BC_value = temp.ranking()
-    return RK_BC_value
+    RK_BC_value = temp.scores()
+    RK_BC_ranking = temp.ranking()
+    return RK_BC_value, RK_BC_ranking
 
 def cal_GS_BC(g_nk):
     temp = nk.centrality.EstimateBetweenness(g_nk, nSamples = 8192).run()
-    GS_BC_value = temp.ranking()
-    return GS_BC_value
+    GS_BC_value = temp.scores()
+    GS_BC_ranking = temp.ranking()
+    return GS_BC_value,GS_BC_ranking
 
 def cal_Kadabra_BC(g_nk):
     temp = nk.centrality.KadabraBetweenness(g_nk, err = 0.01, delta = 0.1).run()
-    Kadabra_BC_value = temp.ranking()
-    return Kadabra_BC_value
+    Kadabra_BC_value = temp.scores()
+    Kadabra_BC_value_ranking = temp.ranking()
+    return Kadabra_BC_value, Kadabra_BC_value_ranking
 
 def cal_close(g_nk):
-    temp = nk.centrality.Closeness(g_nk, False, nk.centrality.ClosenessVariant.Standard)
-    temp.run()
-    Close_value = temp.ranking()
-    return Close_value
+    temp = nk.centrality.Closeness(g_nk, False, nk.centrality.ClosenessVariant.Standard).run()
+    Close_value = temp.scores()
+    Close_ranking = temp.ranking()
+    return Close_value, Close_ranking
 
-def output2file(centrality_value,  map_name, mode):
+def output2file(centrality_value, centrality_ranking, map_name, mode):
     directory = "../centrality/" + map_name
     if not os.path.exists(directory):
         os.makedirs(directory)
-    file_path = os.path.join(directory, mode+".txt")
-    with open(file_path, 'w') as f:
-        for item in centrality_value:
+    file_path = os.path.join(directory, str(mode))
+    with open(file_path + '.txt', 'w') as f:
+        for index,item in enumerate(centrality_value):
+            f.write(str(item) + " " + str(index) + "\n")
+    with open(file_path + "_ranking.txt", 'w') as f:
+        for item in centrality_ranking:
             f.write(str(item[1]) + " " + str(item[0]) + "\n")
 
 def prompt():
@@ -90,7 +98,6 @@ user_input = input("This python file will calculate one specific centrality.\n"
                     +" there are several option:\n" 
                     +"0——random, 1——degree, 2——BC, 3——RK, 4——GS, 5——Kadabra, 6-Close\n")
 options = list(map(int, user_input.split()))
-print(options)
 branch = {
     0 : lambda: cal_random(g_nk),
     1 : lambda: cal_degree(g_nk),
@@ -118,9 +125,9 @@ with open(map_name + "_centrality_cal_time.txt", "a") as f:
         mode = modes.get(option)
         if func:
             start = time.perf_counter()
-            centrality_value = func()
+            centrality_value, centrality_ranking = func()
             end = time.perf_counter()
             print(f"time cost of calculate {mode}: {end-start:.4f}")
-            output2file(centrality_value, map_name, mode)
+            output2file(centrality_value,centrality_ranking, map_name, mode)
             prompt()
     sys.stdout = sys.__stdout__

@@ -14,14 +14,16 @@ int main() {
     cout << "Enter the the name of map, e.g : graph_example.tsv"<<endl ;
     getline(cin, map_name);
     cout << "The map name you entered: " << map_name << endl;
+    // 定义输出的文件流
     ofstream outfile(map_name + "_pll_result.txt", ofstream::app);
+
     map_path = "../maps/"+ map_name;
     string source_dir = "../centrality/" + map_name + "/";
     string dest_file_name = "centrality.txt";
     cout << endl << "This C++ file will execute PLL based on one specific order.\n"
               << "Please Input a number or several numbers' combination to decide which centrality,\n"
               << "there are several option:\n"
-              << "0——random, 1——degree, 2——BC, 3——RK, 4——GS, 5——Kadabra, 6-Close e.g: 1 2 3 a\n"
+              << "0——random, 1——degree, 2——BC, 3——RK, 4——GS, 5——Kadabra, 6-Close, 7——Degree_shuffle e.g: 1 2 3 a\n"
               << "Note: Input -1 or any alphabet to end input" << endl;
     while (cin >> num && num != -1) {
         nums.push_back(num);
@@ -33,7 +35,8 @@ int main() {
     for (auto n : nums) {
         char* centrality = choose_centrality(n);
         std::cout << map_name << "->" << centrality << std::endl;
-        std::ifstream source_file(source_dir + centrality + ".txt");
+        std::ifstream source_file(source_dir + centrality + "_ranking.txt");
+        std::cout << source_dir + centrality + "_ranking.txt"<< std::endl; 
         std::string content((std::istreambuf_iterator<char>(source_file)), std::istreambuf_iterator<char>());
         source_file.close();
         std::ofstream dest_file(dest_file_name);
@@ -82,8 +85,11 @@ char* choose_centrality(int n) {
         case 6:
             std::strcpy(centrality, "Close");
             break; // 添加 break 语句
+        case 7:
+            std::strcpy(centrality, "Degree_shuffle");
+            break;
         default:
-            std::strcpy(centrality, "degree");
+            std::strcpy(centrality, "Degree");
     }
     return centrality;
 }
