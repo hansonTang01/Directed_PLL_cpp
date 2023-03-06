@@ -86,7 +86,7 @@ char* choose_centrality(int n) {
             std::strcpy(centrality, "Close");
             break; // 添加 break 语句
         case 7:
-            std::strcpy(centrality, "Degree_shuffle");
+            std::strcpy(centrality, "BC_shuffle");
             break;
         default:
             std::strcpy(centrality, "Degree");

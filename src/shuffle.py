@@ -21,7 +21,7 @@ user_input3 = input("whether topk% you wanna shuffle or the rest,"
 choose2 = int(user_input3)
 
     # mode = modes.get(choose)
-mode = 'Degree'
+mode = 'BC'
 with open ('../centrality/' + map_name + '/' + mode + '_ranking.txt', 'r') as f:
     lines = f.readlines()
 shuffle_lines = int(len(lines) * topK)
