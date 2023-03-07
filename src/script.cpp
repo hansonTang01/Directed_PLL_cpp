@@ -23,7 +23,7 @@ int main() {
     cout << endl << "This C++ file will execute PLL based on one specific order.\n"
               << "Please Input a number or several numbers' combination to decide which centrality,\n"
               << "there are several option:\n"
-              << "0——random, 1——degree, 2——BC, 3——RK, 4——GS, 5——Kadabra, 6-Close, 7——Degree_shuffle e.g: 1 2 3 a\n"
+              << "0——random, 1——degree, 2——BC, 3——RK, 4——GS, 5——Kadabra, 6-Close, 7——BC_shuffle e.g: 1 2 3 a\n"
               << "Note: Input -1 or any alphabet to end input" << endl;
     while (cin >> num && num != -1) {
         nums.push_back(num);
@@ -35,8 +35,7 @@ int main() {
     for (auto n : nums) {
         char* centrality = choose_centrality(n);
         std::cout << map_name << "->" << centrality << std::endl;
-        std::ifstream source_file(source_dir + centrality + "_ranking.txt");
-        std::cout << source_dir + centrality + "_ranking.txt"<< std::endl; 
+        std::ifstream source_file(source_dir + centrality + "_ranking.txt"); 
         std::string content((std::istreambuf_iterator<char>(source_file)), std::istreambuf_iterator<char>());
         source_file.close();
         std::ofstream dest_file(dest_file_name);

@@ -6,8 +6,7 @@ import os
 import time
 
 def read_graph(map_path):
-    import networkx as nx
-    G = nx.Graph()
+    G = nx.DiGraph()
     f = open(map_path, 'r')
     data = f.readlines()
     f.close()
@@ -21,7 +20,7 @@ def read_graph(map_path):
 
 def nx2nkit(g_nx):
     node_num = g_nx.number_of_nodes()
-    g_nkit = nk.Graph(directed=False)
+    g_nkit = nk.Graph(directed=True)
 
     for i in range(node_num):
         g_nkit.addNode()
@@ -43,6 +42,7 @@ def cal_degree(g_nk):
 def cal_BC(g_nk):
     temp = nk.centrality.Betweenness(g_nk, normalized=True).run()
     BC_value = temp.scores()
+    # BC_value = [0,0,0]
     BC_ranking = temp.ranking()
     return BC_value, BC_ranking
 
